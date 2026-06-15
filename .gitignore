@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Caches / archives
+*.zip
+.cache/
+
+# Local helper folders (not part of the project)
+commits/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,8 +1,8 @@
 """
-Полный прогон: все методы адаптации на GSM8K и MMLU. Рассчитано на Colab T4.
-Обучения нет нигде.
+Полный прогон всех методов адаптации на GSM8K и MMLU.
+Модель Qwen2.5-3B-Instruct (заморожена). Colab T4. Обучения нет нигде.
 
-    python run_all.py                          полный прогон (200 GSM8K / 30 MMLU)
+    python run_all.py                          полный прогон
     python run_all.py --n-test 80 --n-mmlu 15  свой размер выборки
     python run_all.py --quick                  быстрый смоук-тест
     python run_all.py --kshot                  ещё и кривая accuracy vs k

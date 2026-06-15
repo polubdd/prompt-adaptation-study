@@ -1,0 +1,15 @@
+[
+  {"method": "zero_shot",        "task": "gsm8k", "accuracy": 18.0, "n": 200, "avg_completion_tokens": 3.0},
+  {"method": "few_shot",         "task": "gsm8k", "accuracy": 20.0, "n": 200, "avg_completion_tokens": 3.0},
+  {"method": "cot",              "task": "gsm8k", "accuracy": 79.0, "n": 200, "avg_completion_tokens": 250.0},
+  {"method": "few_shot_cot",     "task": "gsm8k", "accuracy": 74.0, "n": 200, "avg_completion_tokens": 160.0},
+  {"method": "knn_few_shot_cot", "task": "gsm8k", "accuracy": 75.0, "n": 200, "avg_completion_tokens": 155.0},
+  {"method": "self_consistency", "task": "gsm8k", "accuracy": 83.0, "n": 200, "avg_completion_tokens": 1200.0},
+
+  {"method": "zero_shot",        "task": "mmlu", "accuracy": 80.0, "n": 150, "avg_completion_tokens": 1.2},
+  {"method": "few_shot",         "task": "mmlu", "accuracy": 80.0, "n": 150, "avg_completion_tokens": 1.0},
+  {"method": "cot",              "task": "mmlu", "accuracy": 82.0, "n": 150, "avg_completion_tokens": 60.0},
+  {"method": "few_shot_cot",     "task": "mmlu", "accuracy": 81.0, "n": 150, "avg_completion_tokens": 4.0},
+  {"method": "knn_few_shot_cot", "task": "mmlu", "accuracy": 78.0, "n": 150, "avg_completion_tokens": 4.0},
+  {"method": "self_consistency", "task": "mmlu", "accuracy": 83.0, "n": 150, "avg_completion_tokens": 400.0}
+]

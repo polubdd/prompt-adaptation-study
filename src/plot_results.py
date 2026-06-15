@@ -64,9 +64,9 @@ def plot_accuracy_by_method(df):
 
 
 def plot_accuracy_vs_cost(df):
+    sub = df[df["task"] == "gsm8k"]
     fig, ax = plt.subplots(figsize=(8, 5.5))
-    gsm = df[df["task"] == "gsm8k"]
-    for _, row in gsm.iterrows():
+    for _, row in sub.iterrows():
         c = PALETTE.get(row["method"], "gray")
         ax.scatter(row["avg_completion_tokens"], row["accuracy"], s=220, color=c,
                    edgecolors="white", linewidths=1.5, zorder=3)
@@ -75,7 +75,7 @@ def plot_accuracy_vs_cost(df):
                     textcoords="offset points", xytext=(8, 4), fontsize=9)
     ax.set_xlabel("Avg completion tokens (cost ↑)", fontsize=11)
     ax.set_ylabel("GSM8K accuracy (%)", fontsize=11)
-    ax.set_title("Quality vs. cost of reasoning — GSM8K", fontsize=12, fontweight="bold")
+    ax.set_title("Качество vs стоимость — GSM8K", fontsize=12, fontweight="bold")
     ax.grid(True, alpha=0.3)
     sns.despine(ax=ax)
     plt.tight_layout()
