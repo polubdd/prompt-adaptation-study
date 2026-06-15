@@ -1,7 +1,8 @@
 """Загрузка GSM8K (рассуждение) и подмножества MMLU (знания) + извлечение ответов."""
 
 import re
-from datasets import load_dataset
+import pandas as pd
+from huggingface_hub import hf_hub_download
 
 
 MMLU_SUBJECTS = [
@@ -14,40 +15,45 @@ MMLU_SUBJECTS = [
 LETTERS = ["A", "B", "C", "D"]
 
 
+def _read_parquet(repo: str, filename: str) -> pd.DataFrame:
+    path = hf_hub_download(repo, filename, repo_type="dataset")
+    return pd.read_parquet(path)
+
+
 def load_gsm8k(n_test: int = 200, n_pool: int = 100, seed: int = 0):
-    ds = load_dataset("openai/gsm8k", "main")
-    train = ds["train"].shuffle(seed=seed)
-    test = ds["test"].shuffle(seed=seed)
+    train = (_read_parquet("openai/gsm8k", "main/train-00000-of-00001.parquet")
+             .sample(frac=1, random_state=seed).reset_index(drop=True))
+    test = (_read_parquet("openai/gsm8k", "main/test-00000-of-00001.parquet")
+            .sample(frac=1, random_state=seed).reset_index(drop=True))
 
     def parse(row):
-        sol = row["answer"]
-        gold = sol.split("####")[-1].strip().replace(",", "")
-        cot = sol.split("####")[0].strip()
+        gold = row["answer"].split("####")[-1].strip().replace(",", "")
+        cot = row["answer"].split("####")[0].strip()
         return {"question": row["question"], "answer": int(gold), "cot": cot}
 
-    test_items = [parse(r) for r in test.select(range(n_test))]
-    pool_items = [parse(r) for r in train.select(range(n_pool))]
+    test_items = [parse(r) for _, r in test.head(n_test).iterrows()]
+    pool_items = [parse(r) for _, r in train.head(n_pool).iterrows()]
     return test_items, pool_items
 
 
 def load_mmlu(n_test_per_subject: int = 30, n_pool: int = 50, seed: int = 0):
     test_items, pool_items = [], []
     for subj in MMLU_SUBJECTS:
-        ds = load_dataset("cais/mmlu", subj)
-        test = ds["test"].shuffle(seed=seed)
-        for r in test.select(range(min(n_test_per_subject, len(test)))):
+        test = (_read_parquet("cais/mmlu", f"{subj}/test-00000-of-00001.parquet")
+                .sample(frac=1, random_state=seed).reset_index(drop=True))
+        dev = _read_parquet("cais/mmlu", f"{subj}/dev-00000-of-00001.parquet")
+        for _, r in test.head(n_test_per_subject).iterrows():
             test_items.append({
                 "question": r["question"],
-                "choices": r["choices"],
-                "answer": LETTERS[r["answer"]],
+                "choices": list(r["choices"]),
+                "answer": LETTERS[int(r["answer"])],
                 "subject": subj,
             })
-        dev = ds["dev"] if "dev" in ds else ds["validation"]
-        for r in dev:
+        for _, r in dev.iterrows():
             pool_items.append({
                 "question": r["question"],
-                "choices": r["choices"],
-                "answer": LETTERS[r["answer"]],
+                "choices": list(r["choices"]),
+                "answer": LETTERS[int(r["answer"])],
                 "subject": subj,
             })
     return test_items, pool_items[:n_pool]
