@@ -15,7 +15,7 @@ LETTERS = ["A", "B", "C", "D"]
 
 
 def load_gsm8k(n_test: int = 200, n_pool: int = 100, seed: int = 0):
-    ds = load_dataset("gsm8k", "main")
+    ds = load_dataset("openai/gsm8k", "main")
     train = ds["train"].shuffle(seed=seed)
     test = ds["test"].shuffle(seed=seed)
 
